@@ -1,0 +1,4 @@
+/.idea/
+offers.db
+/categories.db
+.env
