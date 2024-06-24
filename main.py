@@ -144,8 +144,8 @@ async def insert_product_to_db(db_file, product, subcategory_id, semaphore, save
 
             await conn.commit()
 
-    tasks = [insert_offer_to_db(db_file, offer['id'], product['id'], product['name'], semaphore, save_to_csv, csv_writer) for offer
-             in product['offers']]
+    tasks = [insert_offer_to_db(db_file, offer['id'], product['id'], product['name'], semaphore, save_to_csv,
+                                csv_writer) for offer in product['offers']]
     await asyncio.gather(*tasks)
 
 
@@ -174,10 +174,12 @@ async def insert_offer_to_db(db_file, offer_id, product_id, product_name, semaph
 
             discount = float(offer_details['discount_price']) < float(offer_details['retail_price'])
             await cursor.execute('''
-                INSERT OR REPLACE INTO offers (id, product_id, size, retail_price, discount_price, discount, vendor_code, is_available)
+                INSERT OR REPLACE INTO offers (id, product_id, size, retail_price, discount_price, discount, 
+                vendor_code, is_available)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (offer_details['id'], product_id, offer_details['size'], offer_details['retail_price'], offer_details['discount_price'], discount,
-                  offer_details['vendor_code'], offer_details['availability_info']['is_available']))
+            ''', (offer_details['id'], product_id, offer_details['size'], offer_details['retail_price'],
+                  offer_details['discount_price'], discount, offer_details['vendor_code'],
+                  offer_details['availability_info']['is_available']))
 
             for shop in offer_details['availability_info']['offer_store_amount']:
                 await cursor.execute('''
@@ -224,9 +226,9 @@ async def main(db_file, max_requests, save_to_csv):
 
         if save_to_csv:
             with open(csv_file, mode='w', newline='', encoding='utf-8') as file:
-                fieldnames = ['city', 'address', 'vendor_code', 'product_name', 'size', 'retail_price', 'discount_price',
-                              'availability_text']
-                csv_writer = csv.DictWriter(file, fieldnames=fieldnames)
+                fieldnames = ['city', 'address', 'vendor_code', 'product_name', 'size', 'retail_price',
+                              'discount_price', 'availability_text']
+                csv_writer = csv.DictWriter(file, fieldnames=fieldnames, delimiter=';')
                 csv_writer.writeheader()
 
                 for category in categories_data:
