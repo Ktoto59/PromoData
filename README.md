@@ -82,4 +82,4 @@ python main.py --db product.db -rl 10
 
 Каждая таблица имеет свою структуру и связи между ними для хранения данных.
 
-![img.png](img.png)
+![img_1.png](img_1.png)
